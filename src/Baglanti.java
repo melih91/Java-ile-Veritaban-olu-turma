@@ -1,5 +1,6 @@
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -13,8 +14,9 @@ public class Baglanti {
 	private int port = 3306;
 	private Connection con = null;
 	private Statement statement = null;
+	private PreparedStatement preparedStatement = null;
 
-	public Baglanti() {
+	public void baglanti() {
 
 		// "jdbc:mysql://localhost:3306/demo"
 		String url = "jdbc:mysql://" + host + ":" + port + "/" + dbIsmi + "?useUnicode=true&characterEncoding=utf8";
@@ -33,7 +35,7 @@ public class Baglanti {
 
 	}
 
-	public void CalisanlariGetir() {
+	public void calisanlariGetir() {
 		String sorgu = "Select * From calisanlar";
 
 		try {
@@ -53,7 +55,7 @@ public class Baglanti {
 		}
 	}
 
-	public void CalisanEkle() {
+	public void calisanEkle() {
 		try {
 			statement = con.createStatement();
 			String ad = "Semih";
@@ -70,7 +72,7 @@ public class Baglanti {
 		}
 	}
 
-	public void CalisanGuncelle() {
+	public void calisanGuncelle() {
 		try {
 			statement = con.createStatement();
 			String sorgu = "Update calisanlar Set email = 'yusufcetinkaya@gmail.com' where id = '5'";
@@ -81,10 +83,10 @@ public class Baglanti {
 		}
 	}
 
-	public void CalisanSil() {
+	public void calisanSil() {
 		try {
 			statement = con.createStatement();
-			String sorgu = "Delete from calisanlar where id >5";
+			String sorgu = "Delete from calisanlar where id > 5";
 			int deger = statement.executeUpdate(sorgu);
 			System.out.println("Silme isleminden " + deger + " tane veri etkilendi..");
 
@@ -93,16 +95,51 @@ public class Baglanti {
 		}
 	}
 
+	public void preparedCalisanlariGetir(int id) {
+/*
+		try {
+			statement = con.createStatement();
+			String sorgu = "Select * From calisanlar Where ad Like 'M%'";
+			ResultSet rs = statement.executeQuery(sorgu);
+			while (rs.next()) {
+				System.out.println("Ad: " + rs.getString("ad"));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+*/
+		String sorgu = "Select * From calisanlar Where id > ? and ad like ? ";
+		try {
+			preparedStatement = con.prepareStatement(sorgu);
+			preparedStatement.setInt(1, id);
+			preparedStatement.setString(2, "M%");
+			
+			ResultSet rs =preparedStatement.executeQuery();
+			while (rs.next()) {
+				String ad = rs.getString("ad");
+				String soyad = rs.getString("soyad");
+				String email = rs.getString("email");
+				
+				System.out.println(" ad: " + ad + " soyad: " + soyad + " email: " + email);
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+
 	public static void main(String[] args) {
 		Baglanti baglanti = new Baglanti();
-		System.out.println("Onceki hali...");
-		baglanti.CalisanlariGetir();
+		// System.out.println("Onceki hali...");
+		// baglanti.CalisanlariGetir();
 		System.out.println("********************");
 		// baglanti.CalisanEkle();
-		//baglanti.CalisanGuncelle();
-		baglanti.CalisanSil();
-		System.out.println("Güncel hali...");
-		baglanti.CalisanlariGetir();
+		// baglanti.CalisanGuncelle();
+		// baglanti.CalisanSil();
+		baglanti.preparedCalisanlariGetir(1);
+		// System.out.println("Güncel hali...");
+		// baglanti.CalisanlariGetir();
 
 	}
 
