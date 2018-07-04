@@ -131,9 +131,10 @@ public class Baglanti {
 
 	public static void main(String[] args) {
 		Baglanti baglanti = new Baglanti();
+		baglanti.baglanti();
 		// System.out.println("Onceki hali...");
-		// baglanti.CalisanlariGetir();
-		System.out.println("********************");
+		//baglanti.calisanlariGetir();
+		//System.out.println("********************");
 		// baglanti.CalisanEkle();
 		// baglanti.CalisanGuncelle();
 		// baglanti.CalisanSil();
